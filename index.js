@@ -1,59 +1,48 @@
-// discord.jsライブラリの中から必要な設定を呼び出し、変数に保存します
+const { token } = require('./config.json')
 const { Client, Events, GatewayIntentBits } = require('discord.js');
-
-// 設定ファイルからトークン情報を呼び出し、変数に保存します
-const { token } = require('./config.json');
-
-// クライアントインスタンスと呼ばれるオブジェクトを作成します
 const client = new Client({
   'intents': [
-  GatewayIntentBits.Guilds,
-  GatewayIntentBits.GuildMessages,
-  GatewayIntentBits.MessageContent,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildPresences
   ]
 });
 
-// クライアントオブジェクトが準備OKとなったとき一度だけ実行されます
-client.once(Events.ClientReady, c => {
-        console.log(`準備OKです! ${c.user.tag}がログインします。`);
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
 });
 
-const userIds = ['394528760470306849', '197687062894346240'];
+client.on('guildMemberAdd', member => {
+  const welcomeMessage = `ようこそ、${member.user.tag}さん！サーバーに参加してくれてありがとう！`;
+  member.guild.systemChannel.send(welcomeMessage);
+});
+
+client.once(Events.ClientReady, c => {
+  console.log(`準備OKです! ${c.user.tag}がログインします。`);
+});
 
 client.on('presenceUpdate', (oldPresence, newPresence) => {
+  console.log('aaaaaaaa')
+  // オンライン状態が変更されたユーザーの情報を取得
   const member = newPresence.member;
-  const userStatus = newPresence.clientStatus;
+  console.log("member" + member)
+  console.log("newPresence" + newPresence)
+  console.log(newPresence.clientStatus)
+  if (newPresence.userId === "394528760470306849") {
 
-  if (!userStatus || !userStatus.mobile) {
-    return;
+    // ユーザーのクライアント情報を取得
+    const userStatus = newPresence.clientStatus;
+
+    // ユーザーのクライアント情報をチャンネルに送信
+    const statusMessage = `${member.user.username} がオンラインになりました。\n` +
+      `desktop: ${userStatus.desktop || 'offline'}\n` +
+      `mobile: ${userStatus.mobile || 'offline'}\n` +
+      `web: ${userStatus.web || 'offline'}`;
+    client.channels.cache.get('1097281712221859941').send(statusMessage);
   }
 
-  const userId = member.user.id;
-  // 特定のチャンネルのIDを指定する
-   // discord.jsライブラリの中から必要な設定を呼び出し、変数に保存します
-   const { Client, Events, GatewayIntentBits } = require('discord.js');
-
-   // 設定ファイルからトークン情報を呼び出し、変数に保存します
-   const { token } = require('./config.json');
-
-   // クライアントインスタンスと呼ばれるオブジェクトを作成します
-   const client = new Client({
-     'intents': [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMessages,
-     GatewayIntentBits.MessageContent,
-     GatewayIntentBits.GUILD_PRESENCES                                                                              ]
- });  const channelId = '1097277510259060968';
- const channel = member.guild.channels.cache.get(channelId);
-
-  if (userIds.includes(userId)) {
-    const message = `${member.user.username} が こそこそ携帯でのぞいてるよ！`;
-    const systemChannel = member.guild.channels.cache.get('1097281712221859941');
-
-    if (systemChannel) {
-      systemChannel.send(message);
-    }
-  }
 });
-// ログインします
+
 client.login(token);
