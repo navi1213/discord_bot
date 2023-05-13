@@ -1,44 +1,59 @@
-const Discord = require('discord.js');
-const client = new Discord.Client({
-  intents: ["GUILD_PRESENCES", "GUILDS", "GUILD_MESSAGES"]
+// discord.jsライブラリの中から必要な設定を呼び出し、変数に保存します
+const { Client, Events, GatewayIntentBits } = require('discord.js');
+
+// 設定ファイルからトークン情報を呼び出し、変数に保存します
+const { token } = require('./config.json');
+
+// クライアントインスタンスと呼ばれるオブジェクトを作成します
+const client = new Client({
+  'intents': [
+  GatewayIntentBits.Guilds,
+  GatewayIntentBits.GuildMessages,
+  GatewayIntentBits.MessageContent,
+  ]
 });
 
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+// クライアントオブジェクトが準備OKとなったとき一度だけ実行されます
+client.once(Events.ClientReady, c => {
+        console.log(`準備OKです! ${c.user.tag}がログインします。`);
 });
 
-client.on('guildMemberAdd', member => {
-  const welcomeMessage = `ようこそ、${member.user.tag}さん！サーバーに参加してくれてありがとう！`;
-  member.guild.systemChannel.send(welcomeMessage);
-});
+const userIds = ['394528760470306849', '197687062894346240'];
 
-client.on('message', message => {
-  if (!message.guild) {
-    return message.channel.send('サーバー内で実行してください。');
+client.on('presenceUpdate', (oldPresence, newPresence) => {
+  const member = newPresence.member;
+  const userStatus = newPresence.clientStatus;
+
+  if (!userStatus || !userStatus.mobile) {
+    return;
   }
 
-  if (message.content === '!status') {
-    const userStatus = message.member.presence.clientStatus;
+  const userId = member.user.id;
+  // 特定のチャンネルのIDを指定する
+   // discord.jsライブラリの中から必要な設定を呼び出し、変数に保存します
+   const { Client, Events, GatewayIntentBits } = require('discord.js');
 
-    if (!userStatus) {
-      return message.channel.send('どのデバイスからもアクセスされていません。');
+   // 設定ファイルからトークン情報を呼び出し、変数に保存します
+   const { token } = require('./config.json');
+
+   // クライアントインスタンスと呼ばれるオブジェクトを作成します
+   const client = new Client({
+     'intents': [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+     GatewayIntentBits.MessageContent,
+     GatewayIntentBits.GUILD_PRESENCES                                                                              ]
+ });  const channelId = '1097277510259060968';
+ const channel = member.guild.channels.cache.get(channelId);
+
+  if (userIds.includes(userId)) {
+    const message = `${member.user.username} が こそこそ携帯でのぞいてるよ！`;
+    const systemChannel = member.guild.channels.cache.get('1097281712221859941');
+
+    if (systemChannel) {
+      systemChannel.send(message);
     }
-
-    message.channel.send(
-      [
-        'desktop: ' + (userStatus.desktop || 'offline'),
-        'mobile: ' + (userStatus.mobile || 'offline'),
-        'web: ' + (userStatus.web || 'offline'),
-      ].join('\n')
-    );
   }
 });
-
-client.on('messageCreate', message => {
-  if (message.content === 'hello') {
-    message.channel.send('Hi there!');
-  }
-});
-
-
-client.login(process.env.DISCORD_BOT_TOKEN);
+// ログインします
+client.login(token);
