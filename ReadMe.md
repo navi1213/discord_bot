@@ -13,4 +13,5 @@ Disocordbotのソースコードです
 ・discord.js 14.9
 
 ##　補足
+
 直下にconfig.jsonを作り、その中にDisocrdBotのtokenを追記してください。
