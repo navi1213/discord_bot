@@ -13,7 +13,9 @@ A bot that notifies people who are online on discord
 
 ## Usage
 
+```
 node index.js
+```
 
 ## Features
 
