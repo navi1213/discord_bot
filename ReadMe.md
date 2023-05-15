@@ -1,17 +1,29 @@
-# DiscordBot
+# DiscordSurvaranceBot
 
-Disocordbotのソースコードです
+-
 
+## Overview
 
-## 機能
+A bot that notifies people who are online on discord
 
-・サーバー内にいる特定の人物がオンラインになると通知します
+## Requirement
 
-## 動作環境
+-node.js 16.9
+-discord.js 14.9
 
-・node.js 16.9
-・discord.js 14.9
+## Usage
 
-##　補足
+node index.js
 
-直下にconfig.jsonを作り、その中にDisocrdBotのtokenを追記してください。
+## Features
+
+-
+
+## Reference
+
+## Author
+
+-
+## Licence
+
+-
